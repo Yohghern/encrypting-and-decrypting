@@ -1,0 +1,33 @@
+document.getElementById('encryptButton').addEventListener('click', function() {
+    const file = document.getElementById('imageInput').files[0];
+    const password = document.getElementById('password').value;
+    if (file && password) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const encrypted = CryptoJS.AES.encrypt(e.target.result, password).toString();
+            document.getElementById('resultImage').src = `data:image/png;base64,${btoa(encrypted)}`;
+        };
+        reader.readAsDataURL(file);
+    } else {
+        alert('Please select an image and enter a password.');
+    }
+});
+
+document.getElementById('decryptButton').addEventListener('click', function() {
+    const file = document.getElementById('imageInput').files[0];
+    const password = document.getElementById('password').value;
+    if (file && password) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const decrypted = CryptoJS.AES.decrypt(atob(e.target.result.split(',')[1]), password).toString(CryptoJS.enc.Utf8);
+                document.getElementById('resultImage').src = decrypted;
+            } catch (error) {
+                alert('Decryption failed. Check your password.');
+            }
+        };
+        reader.readAsDataURL(file);
+    } else {
+        alert('Please select an image and enter a password.');
+    }
+});
